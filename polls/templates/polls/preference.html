@@ -1,0 +1,74 @@
+{% extends 'polls/base.html' %}
+{% load static %}
+{% block extra_css %}
+<script src="https://code.jquery.com/jquery-3.2.1.js"
+			  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+			  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/mono-blue.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="{% static "js/timeme.js" %}"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
+{% block section %}
+
+  <div class="content">
+    <p class="title">The following Question is based on the below schema:</p>
+    <div class="notification">
+      <pre>
+        <code class="hljs sql">
+          {{ question.schema.body }}
+        </code>
+      </pre>
+    </div>
+  </div>
+
+  <div class="notification">
+
+    {% if question.question_type == 'ASSERT' %}
+    <div class="content">
+
+      <label class="label">{{ question.question_text }}</label>
+
+      <div class="notification">
+        <pre>
+          <code class="hljs sql">
+            {{ question.question_insert_statement }}
+          </code>
+        </pre>
+      </div>
+    </div>
+    {% endif %}
+
+    <form action="{% url 'preference' %}" method="post">
+      {% csrf_token %}
+      <div class="control">
+        {% for choice in choices %}
+        <label class="radio">
+          <input type="radio" name="answer" value="{{choice.technique}}">
+          <pre>
+            <code class="hljs sql">
+{{ choice.choice_text }}
+            </code>
+          </pre>
+          </input>
+        </label>
+        <br />
+        {% endfor %}
+        <input type="hidden" class="input" type="text" name="question_id" value="{{question.pk}}">
+        <input type="hidden" class="input" id="timer" type="text" name="time_duration" value="0">
+        <input type="hidden" class="input" type="text" name="question_type" value="{{question.question_type}}">
+      </div>
+
+      <br />
+
+      <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+          <button type="submit" class="button is-link">Submit</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

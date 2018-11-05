@@ -1,0 +1,103 @@
+{% extends 'polls/base.html' %}
+
+{% block content %}
+<p class="title">Information Sheet and Consent Form</p>
+<br />
+<div class="content">
+
+  <p>
+  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+  </p>
+
+  <p>
+  <b>The Purpose of the Project</b>
+  </p>
+
+
+  <p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining</p>
+
+  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+  <p><i>TLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</i></p>
+
+  <p>
+  <b>Do I Have To Take Part?</b>
+  </p>
+
+  <p>
+
+  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+  </p>
+
+  <p>
+  <b>What will happen to me if I take part?</b>
+  </p>
+
+  <p>
+  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+  </p>
+
+  <p>
+  <b>What are the possible benefits of taking part?</b>
+  </p>
+
+  <p>
+  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+  </p>
+
+  <p>
+  <b>Who has ethically reviewed the project?</b>
+  </p>
+
+  <p>
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+  </p>
+
+  <p>
+  <b>Contact for further information</b>
+  </p>
+
+  <p>
+  For further information, please contact John Doe at <a href="mailto:gmail@gmail.com" target="_top">gmail@gmail.com</a>.
+  </p>
+
+  <p>
+  Finally, thank you for taking part in the project.
+  </p>
+</div>
+<br/>
+<div class="notification">
+  <div class="content">
+  <p class="title is-4">ELECTRONIC CONSENT: Please select your choice below</p>
+    <p>Clicking on the "agree" button below indicates that:</p>
+
+    <ul>
+      <li>you have ready the above information</li>
+      <li>you voluntarily agree to participate</li>
+    </ul>
+
+    <p>If you do not wish to participate in the research study, please decline participation by clicking on the "disagree" button.</p>
+    <form action="{% url 'index' %}" method="post">
+      {% csrf_token %}
+      <div class="control">
+        <label class="radio">
+          <input type="radio" name="answer" value="agree">
+          AGREE
+        </label>
+        <label class="radio">
+          <input type="radio" name="answer" value="disagree">
+          DISAGREE
+        </label>
+      </div>
+      <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+          <button type="submit" class="button is-link">Submit</button>
+        </p>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
