@@ -14,28 +14,14 @@ question_types = (
 
 # types
 assertion_types = (
-    ('VPK', 'Violate PK'),
-    ('VNN', 'Violate NN'),
-    ('VFK', 'Violate FK'),
-    ('VUQ', 'Violate UQ'),
-    ('VCC', 'Violate CC'),
-    ('SPK', 'Satisfy PK'),
-    ('SNN', 'Satisfy NN'),
-    ('SFK', 'Satisfy FK'),
-    ('SUQ', 'Satisfy UQ'),
-    ('SCC', 'Satisfy CC'),
+    ('T', 'TURE'),
+    ('F', 'FALSE'),
 )
 
 # Technique
 tech_types = (
-    ('DOMINO', 'Domino'),
-    ('SELECTOR', 'Selector'),
-    ('SOURCER', 'Sourcer'),
-    ('READER', 'Reader'),
-    ('COLNAMER', 'ColumnNamer'),
-    ('AVMLM', 'AVM-LM'),
-    ('AVMR', 'AVM-R'),
-    ('AVMD', 'AVM-D'),
+    ('CN', 'Contorl'),
+    ('TR', 'Treatement'),
 )
 
 
@@ -56,7 +42,7 @@ class Question(models.Model):
     is_it_dropdown = models.BooleanField(default=False, help_text=u"Is it a dropdown?")
     is_it_opinion = models.BooleanField(default=False, help_text=u"Is it an opinion?")
     question_type = models.CharField(max_length=255, choices=question_types, default='ASSERT')
-    assertion_type = models.CharField(max_length=255, choices=assertion_types, default='VPK')
+    assertion_type = models.CharField(max_length=255, choices=assertion_types, default='T')
     technique = models.CharField(max_length=255, choices=tech_types, null=True, blank=True)
 
     def __str__(self):
@@ -65,7 +51,7 @@ class Question(models.Model):
 class Dropdown(models.Model):
     question = models.ForeignKey(Question, related_name="dropdown", help_text = u"Choose a question for this answer")
     dropdown_text = models.TextField(help_text=u"Added your Dropdown text here.")
-    technique = models.CharField(max_length=255, choices=tech_types, default='DOMINO')
+    technique = models.CharField(max_length=255, choices=tech_types, default='CN')
 
     def __str__(self):
         return self.dropdown_text
@@ -74,7 +60,7 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, help_text = u"Choose a question for this answer")
     choice_text = models.TextField(help_text=u"Added your Choice text here.")
     right_answer = models.BooleanField(default=False, help_text=u"Is this a right answer?")
-    technique = models.CharField(max_length=255, choices=tech_types, default='DOMINO')
+    technique = models.CharField(max_length=255, choices=tech_types, default='CN')
 
     def __str__(self):
         return self.choice_text
@@ -114,7 +100,7 @@ class GroupUser(models.Model):
 class GroupQuestions(models.Model):
     group = models.ForeignKey(Group)
     technique = models.CharField(max_length=255, choices=tech_types, null=True, blank=True)
-    assertion_type = models.CharField(max_length=255, choices=assertion_types, default='VPK')
+    assertion_type = models.CharField(max_length=255, choices=assertion_types, default='T')
     schema = models.ForeignKey(Schema, help_text = u"Choose a Schema", null=True, blank=True)
     #question = models.ForeignKey(Question, help_text = u"List of Questins")
 
