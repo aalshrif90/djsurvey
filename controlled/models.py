@@ -13,15 +13,9 @@ question_types = (
 )
 
 # types
-assertion_types = (
+assertions = (
     ('T', 'TURE'),
     ('F', 'FALSE'),
-)
-
-# Technique
-tech_types = (
-    ('CN', 'Contorl'),
-    ('TR', 'Treatement'),
 )
 
 # Automattion Methods
@@ -57,7 +51,8 @@ class TestCase(models.Model):
     test_case_id = models.CharField(max_length=255, help_text = u"Test Case ID")
     test_suite = models.ForeignKey(TestSuite, help_text = u"Choose a Test Suite", null=False, blank=False)
     code = models.TextField(help_text = u"Test Case Code", null=True, blank=True)
-    assertion = models.CharField(max_length=255, choices=assertion_types, default='T', help_text = u"It Expects what? True or False. Can be changed in models.pu")
+    assertion = models.CharField(max_length=255, choices=assertions, default='T', help_text = u"""It Expects what? True or False. 
+    Can be changed in models.py""")
 
     def __str__(self):
         return self.test_case_id
@@ -72,10 +67,10 @@ class Group(models.Model):
 
 class Participants(models.Model):
     group = models.ForeignKey(Group)
-    pcode = models.CharField(max_length=255, help_text=u"Participants Code - Maunal Generation or Automated")
+    pcode = models.CharField(max_length=255, help_text=u"Participants Code - Manual Generation or Automated")
 
     def __str__(self):
-        return "Group %s - %s" % (self.group, self.user_code)
+        return "Group %s - %s" % (self.group, self.pcode)
         #return self.group + "-" + self.user_code
 
 # Question Structure
@@ -96,19 +91,18 @@ class Question(models.Model):
     program = models.ForeignKey(Program, help_text = u"Choose a Program", null=True, blank=True)
     question_category = models.ForeignKey(QuestionCategory, help_text = u"Choose a Question Category", null=True, blank=True)
     question_text = models.ForeignKey(QuestionText, help_text = u"Choose a Question", null=True, blank=True)
-    code = models.TextField(help_text=u"Code Assoicated with the Question", null=True, blank=True)
+    code = models.TextField(help_text=u"Code Associated with the Question", null=True, blank=True)
     is_it_singlechoice = models.BooleanField(default=False, help_text=u"One choice e.g. True or False?")
     is_it_multichoices = models.BooleanField(default=False, help_text=u"multiple choices?")
-    is_it_dropdown = models.BooleanField(default=False, help_text=u"dropdown?")
+    is_it_dropdown = models.BooleanField(default=False, help_text=u"Drop Down?")
     is_it_opinion = models.BooleanField(default=False, help_text=u"Requiring Opinion?")
 
     def __str__(self):
-        return self.id
+        return self.pk
 
 class Dropdown(models.Model):
     question = models.ForeignKey(Question, related_name="dropdown", help_text = u"Choose a question for this answer")
     dropdown_text = models.TextField(help_text=u"Added your Dropdown text here.")
-    technique = models.CharField(max_length=255, choices=tech_types, default='CN')
 
     def __str__(self):
         return self.dropdown_text
@@ -117,32 +111,11 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, help_text = u"Choose a question for this answer")
     choice_text = models.TextField(help_text=u"Added your Choice text here.")
     right_answer = models.BooleanField(default=False, help_text=u"Is this a right answer?")
-    technique = models.CharField(max_length=255, choices=tech_types, default='CN')
 
     def __str__(self):
         return self.choice_text
 
-class RandomisedAnswersOrder(models.Model):
-    user_code = models.CharField(max_length=255, help_text=u"The code given to a user")
-    question = models.ForeignKey(Question, help_text = u"List of Questins")
-    timestamp = models.DateTimeField(auto_now_add=True)
-    answered = models.BooleanField(default=False, help_text=u"is this question answered?")
-
-    class Meta:
-        ordering = ['timestamp']
-
-class SchemaShowedOrder(models.Model):
-    user_code = models.CharField(max_length=255, help_text=u"The code given to a user")
-    schema = models.ForeignKey(Schema, help_text = u"Schema")
-    timestamp = models.DateTimeField(auto_now_add=True)
-    showed = models.BooleanField(default=False, help_text=u"have the schema been showed?")
-
-    class Meta:
-        ordering = ['timestamp']
-
-
-
-
+# Storing Answers
 class Answer(models.Model):
     question = models.ForeignKey(Question, help_text = u"the question answered")
     user_code = models.CharField(max_length=255, help_text=u"The code given to a user")
@@ -155,4 +128,27 @@ class Answer(models.Model):
     opinion_text = models.TextField(null=True,blank=True,help_text=u"opinion text")
 
     def __str__(self):
-        return str(self.id)
+        return str(self.pk)
+
+    class Meta:
+            ordering = ['timestamp']
+
+
+# Logging the questions showed and which participant and program --- in case of counter-balancing
+class RandomisedAnswersOrder(models.Model):
+    user_code = models.CharField(max_length=255, help_text=u"The code given to a user")
+    question = models.ForeignKey(Question, help_text = u"List of Questins")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    answered = models.BooleanField(default=False, help_text=u"is this question answered?")
+
+    class Meta:
+        ordering = ['timestamp']
+
+class ProgramOrder(models.Model):
+    user_code = models.CharField(max_length=255, help_text=u"The code given to a user")
+    program = models.ForeignKey(Program, help_text = u"Schema")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    showed = models.BooleanField(default=False, help_text=u"have the schema been showed?")
+
+    class Meta:
+        ordering = ['timestamp']
