@@ -1,0 +1,52 @@
+{% extends 'polls/base.html' %}
+
+{% block section %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="content">
+
+  <p class="title">Background</p>
+
+  <form action="{% url 'background' %}" method="post">
+    {% csrf_token %}
+    {% for question in questions %}
+      <div class="notification">
+        <h2 class="subtitle">Question {{forloop.conuter1}}</h2>
+
+        <div class="field">
+          <label class="label">{{question.question_text}}</label>
+          <div class="control">
+            <div class="select">
+              <select name="question-{{question.pk}}">
+                {% for item in question.dropdown.all %}
+                  <option value="{{ item.dropdown_text }}">{{ item.dropdown_text }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {% if question.is_it_opinion %}
+        <div class="field">
+          <label class="label">Tell us your experince and how you did it?</label>
+          <div class="control">
+            <textarea class="textarea" name="question-{{question.pk}}-opinion"></textarea>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <div class="notification">
+      <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+          <button type="submit" class="button is-link">Submit</button>
+        </p>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
 
 # assertions
 assertions = (
@@ -25,6 +27,18 @@ ts_label = (
     ('RD', 'Redcued'),
 )
 
+# Index page title and content. I use it for infromation sheet and conset.
+class IndexPageContent(models.Model):
+    title = models.CharField(max_length=255, help_text = u"Study Title")
+    text = MarkdownxField(help_text = u"Markdown Text", null=True, blank=True)
+    default = models.BooleanField(default=False, help_text=u"Is this the default content?")
+
+    @property
+    def formatted_markdown(self):
+        return markdownify(self.text)
+
+    def __str__(self):
+        return self.title
 
 # Program -> TestSuite -> TestCase
 class Program(models.Model):

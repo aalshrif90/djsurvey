@@ -1,0 +1,49 @@
+{% extends 'polls/base.html' %}
+
+{% block section %}
+<div class="container">
+  <h1 class="title">
+    {{content.title}}
+  </h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="content">
+  {{content.formatted_markdown|safe }}
+</div>
+<br/>
+<div class="notification">
+  <div class="content">
+  <p class="title is-4">ELECTRONIC CONSENT: Please select your choice below</p>
+    <p>Clicking on the "agree" button below indicates that:</p>
+
+    <ul>
+      <li>you have ready the above information</li>
+      <li>you voluntarily agree to participate</li>
+    </ul>
+
+    <p>If you do not wish to participate in the research study, please decline participation by clicking on the "disagree" button.</p>
+    <form action="{% url 'index' %}" method="post">
+      {% csrf_token %}
+      <div class="control">
+        <label class="radio">
+          <input type="radio" name="answer" value="agree">
+          AGREE
+        </label>
+        <label class="radio">
+          <input type="radio" name="answer" value="disagree">
+          DISAGREE
+        </label>
+      </div>
+      <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+          <button type="submit" class="button is-link">Submit</button>
+        </p>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'nested_admin',
+    'markdownx',
     #'polls',
     #'controlled',
 ]

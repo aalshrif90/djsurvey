@@ -1,0 +1,185 @@
+{% extends 'polls/base.html' %}
+{% load static %}
+{% block extra_css %}
+<script src="https://code.jquery.com/jquery-3.2.1.js"
+			  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+			  crossorigin="anonymous"></script>
+<!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/mono-blue.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.1.0/highlightjs-line-numbers.min.js"></script>-->
+<script src="{% static "js/timeme.js" %}"></script>
+<link href="{% static "css/prism.css" %}" rel="stylesheet" />
+<link href="{% static "css/prism-line-numbers.css" %}" rel="stylesheet" />
+<script>
+	//hljs.initHighlightingOnLoad();
+	//hljs.initLineNumbersOnLoad();
+</script>
+<style>
+#overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    //background-color: rgb(0, 0, 0);
+    background: rgba(0,0,0,.6);
+    z-index: 2;
+    //cursor: pointer;
+}
+
+#all {
+    -webkit-filter: blur(5px);
+    filter:blur(5px);
+}
+
+#text{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 50px;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+}
+/* for block of numbers */
+td.hljs-ln-numbers {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	text-align: left;
+	color: #ccc;
+	border-right: 1px solid #CCC;
+	vertical-align: top;
+	padding-right: 5px;
+
+	/* your custom style here */
+}
+
+/* for block of code */
+td.hljs-ln-code {
+	padding-left: 10px;
+}
+pre code {
+    font-size: initial;
+		white-space: pre-wrap;       /* css-3 */
+		white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+		white-space: -pre-wrap;      /* Opera 4-6 */
+		white-space: -o-pre-wrap;    /* Opera 7 */
+		word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.content pre {
+padding-top: 0.25em;
+padding-bottom: 0.25em;
+}
+
+.notification {
+    padding: 0.25rem 2.5rem 0.25rem 1.5rem
+}
+
+.content {
+    margin-bottom: 0em;
+}
+</style>
+{% endblock %}
+
+{% block section %}
+
+{% for question in questions %}
+<div id="overlay">
+  <div id="text">
+    Please click the button below to remove this overlay and to start your answering questions
+    <br />
+    <button onclick="off()" class="button">Show the question</button>
+  </div>
+</div>
+<div id="all">
+  <div class="content">
+		<p class="title is-3">Question ({{ request.session.remainingQuestions }}/18)</p>
+    <p class="title is-4">The following question is based on the below schema:</p>
+    <div class="notification">
+      <pre class="line-numbers"><code class="language-sql">{{ question.schema.body }}</code></pre>
+    </div>
+  </div>
+
+  <div class="notification">
+
+    {% if question.question_type == 'ASSERT' or question.question_type == 'practice' %}
+    <div class="content">
+
+      <!--<label class="label">{{ question.question_text }}</label>-->
+			<label class="label">The database is initially empty and the following INSERT statements are sequential. If the INSERT statement is successfully accepted, the data will be inserted into the database.  The success/failure of the following INSERT statements then depends on this new database state.
+			<pre><code class="language-sql">{{ question.question_insert_statement|linenumbers }}</code></pre>
+			<label class="label">Which of the above INSERT statements, if any, will be rejected first?</label>
+    </div>
+    {% endif %}
+    <form action="{% url 'question' %}" method="post">
+      {% csrf_token %}
+      <div class="control">
+        {% for choice in choices %}
+        <label class="radio">
+          <input type="radio" name="answer" value="{{ choice.choice_text }}" required>
+          {{ choice.choice_text }}
+        </label>
+				<br />
+        {% endfor %}
+				<input type="hidden" class="input" type="text" name="tech_type" value="{{question.technique}}">
+        <input type="hidden" class="input" type="text" name="question_id" value="{{question.pk}}">
+        <input type="hidden" class="input" id="timer" type="text" name="time_duration" value="0">
+        <input type="hidden" class="input" type="text" name="question_type" value="{{question.question_type}}">
+      </div>
+
+      <br />
+
+      <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+          <button type="submit" class="button is-link">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block content %}
+<script>
+// Disable backword functionality
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    history.go(1);
+};
+// overlay
+document.getElementById("overlay").style.display = "block";
+// Timer
+var currentTime;
+
+function off() {
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("all").setAttribute("style","-webkit-filter: blur(0px)");
+    document.getElementById("all").setAttribute("style","filter: blur(0px)");
+    //TimeMe.startTimer("my-activity");
+      TimeMe.initialize({
+        currentPageName: "my-home-page", // current page
+					idleTimeoutInSeconds: 300 // seconds
+      });
+
+    //currentTime = TimeMe.getTimeOnCurrentPageInSeconds();
+    //$(".timer").html(currentTime);
+
+    setInterval(function () {
+          var currentTime = TimeMe.getTimeOnCurrentPageInMilliseconds();
+          $("#timer").val(currentTime);
+        }, 1);
+
+}
+</script>
+<script src="{% static "js/prism.js" %}"></script>
+<script src="{% static "js/prism-line-numbers.js" %}"></script>
+{% endblock %}

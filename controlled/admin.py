@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-import nested_admin
+#import nested_admin
+from markdownx.admin import MarkdownxModelAdmin
 
 # Register your models here.
 from .models import *
@@ -24,3 +25,4 @@ class TestSuiteAdmin(admin.ModelAdmin):
 
 admin.site.register(Program)
 admin.site.register(TestSuite, TestSuiteAdmin)
+admin.site.register(IndexPageContent, MarkdownxModelAdmin)
