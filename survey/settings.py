@@ -31,6 +31,8 @@ INTERNAL_IPS = ['127.0.0.1', 'afaalsharif1.hopto.org', 'aalsharif90.hopto.org']
 # Application definition
 
 INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
+    'controlled.apps.ControlledConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'nested_admin',
-    'polls',
+    #'polls',
+    #'controlled',
 ]
 
 MIDDLEWARE = [
