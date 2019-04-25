@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 import glob
 import os
 # Get models 
-from controlled.models import *
+from controlled.models import Program, TestCase, TestSuite
 
 class Command(BaseCommand):
     args = '<foo bar ...>'
