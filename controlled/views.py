@@ -10,4 +10,4 @@ def index(request):
     #response = "Hi to controlled index page"
     #return HttpResponse(response)
     content = IndexPageContent.objects.filter(default = True).first()
-    return render(request, 'controlled/index.html', {'content': content}) 
+    return render(request, 'controlled/index.html', {'content': content})

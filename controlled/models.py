@@ -48,6 +48,14 @@ class Program(models.Model):
     def __str__(self):
         return self.name
 
+class MutatedProgram(models.Model):
+    program = models.ForeignKey(Program, help_text = u"Choose a Program", null=False, blank=False)
+    code = models.TextField(help_text = u"Program Code", null=True, blank=True)
+
+    def __str__(self):
+        return '{}_{}'.format(self.program.name, self.pk)
+        #()self.program.name
+
 class TestSuite(models.Model):
     test_suite_id = models.CharField(max_length=255, help_text = u"Test Suite ID")
     program = models.ForeignKey(Program, help_text = u"Choose a Program", null=False, blank=False)
@@ -69,7 +77,7 @@ class TestCase(models.Model):
         return self.test_case_id
 
 
-# Human Study Groups.
+# Human Study Groups. Each group has a set of participants
 class Group(models.Model):
     name = models.CharField(max_length=255, help_text = u"Name of Group")
 
@@ -85,13 +93,13 @@ class Participants(models.Model):
 
 # Question Structure
 class QuestionCategory(models.Model):
-    name = models.TextField(help_text=u"Question Category")
+    name = models.CharField(max_length=255, help_text=u"Question Category")
 
     def __str__(self):
         return self.name
 
 class QuestionText(models.Model):
-    name = models.TextField(help_text=u"Unique Name for your Question")
+    name = models.CharField(max_length=255, help_text=u"Unique Name for your Question")
     question_text = models.TextField(help_text=u"Question text.")
 
     def __str__(self):
@@ -99,15 +107,16 @@ class QuestionText(models.Model):
 
 class Question(models.Model):
     program = models.ForeignKey(Program, help_text = u"Choose a Program", null=True, blank=True)
-    question_category = models.ForeignKey(QuestionCategory, help_text = u"Choose a Question Category", null=True, blank=True)
-    question_text = models.ForeignKey(QuestionText, help_text = u"Choose a Question", null=True, blank=True)
     test_suite = models.ForeignKey(TestSuite, help_text = u"Choose a Test Suite", null=False, blank=False)
+    question_text = models.ForeignKey(QuestionText, help_text = u"Question Text", null=True, blank=True)
+    question_category = models.ForeignKey(QuestionCategory, help_text = u"Question Category", null=True, blank=True)
     singlechoice = models.BooleanField(default=False, help_text=u"One choice e.g. True or False?")
     multichoices = models.BooleanField(default=False, help_text=u"multiple choices?")
     opinion = models.BooleanField(default=False, help_text=u"Requiring Opinion?")
 
     def __str__(self):
-        return self.pk
+        return "Question %s - %s" % (self.program, self.question_text.name)
+
 
 # Storing Answers
 class Answer(models.Model):
@@ -115,7 +124,8 @@ class Answer(models.Model):
     pcode = models.CharField(max_length=255, help_text=u"Participant Code")
     duration = models.BigIntegerField(help_text=u"Answering Duration (Millisconds)")
     answer = models.CharField(max_length=255, help_text=u"The answer")
-    score = models.BooleanField(default=False, help_text=u"Right or Wrong")
+    score = models.IntegerField(default=0, help_text=u"Score")
+    #score = models.BooleanField(default=False, help_text=u"Right or Wrong")
     timestamp = models.DateTimeField(auto_now_add=True, help_text=u"Timestamp of the answer")
     opinion = models.TextField(null=True,blank=True,help_text=u"Participant Opinion")
 
@@ -127,7 +137,7 @@ class Answer(models.Model):
 
 
 # Logging the questions showed and which participant and program --- in case of counter-balancing
-class RandomisedAnswersOrder(models.Model):
+class RandomiseQuestions(models.Model):
     pcode = models.CharField(max_length=255, help_text=u"Participant Code")
     question = models.ForeignKey(Question, help_text = u"List of Questins")
     timestamp = models.DateTimeField(auto_now_add=True)
