@@ -9,20 +9,18 @@
 <div class="content">
 
   <p class="title">Background</p>
-
   <form action="{% url 'background' %}" method="post">
     {% csrf_token %}
     {% for question in questions %}
       <div class="notification">
         <h2 class="subtitle">Question {{forloop.conuter1}}</h2>
-
         <div class="field">
           <label class="label">{{question.question_text}}</label>
           <div class="control">
             <div class="select">
               <select name="question-{{question.pk}}">
                 {% for item in question.dropdown.all %}
-                  <option value="{{ item.dropdown_text }}">{{ item.dropdown_text }}</option>
+                  <option value="{{ item.dropdown_text }}">{{ item.option }}</option>
                 {% endfor %}
               </select>
             </div>

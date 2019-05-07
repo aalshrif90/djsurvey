@@ -30,6 +30,13 @@ class ParticipantsleInline(admin.StackedInline):
 class GroupAdmin(admin.ModelAdmin):
     inlines = [ParticipantsleInline]
 
+class DropdownOptionInline(admin.StackedInline):
+    model = DropdownOption
+    extra = 2
+
+class DropdownQuestionAdmin(admin.ModelAdmin):
+    inlines = [DropdownOptionInline]
+
 """
 class QuestionCategoryleInline(admin.StackedInline):
     model = QuestionCategory
@@ -51,3 +58,4 @@ admin.site.register(Group, GroupAdmin)
 admin.site.register(QuestionCategory)
 admin.site.register(QuestionText)
 admin.site.register(Question)
+admin.site.register(DropdownQuestion, DropdownQuestionAdmin)

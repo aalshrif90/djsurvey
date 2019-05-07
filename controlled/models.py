@@ -107,15 +107,34 @@ class QuestionText(models.Model):
 
 class Question(models.Model):
     program = models.ForeignKey(Program, help_text = u"Choose a Program", null=True, blank=True)
-    test_suite = models.ForeignKey(TestSuite, help_text = u"Choose a Test Suite", null=False, blank=False)
+    test_suite = models.ForeignKey(TestSuite, help_text = u"Choose a Test Suite", null=True, blank=True)
     question_text = models.ForeignKey(QuestionText, help_text = u"Question Text", null=True, blank=True)
     question_category = models.ForeignKey(QuestionCategory, help_text = u"Question Category", null=True, blank=True)
     singlechoice = models.BooleanField(default=False, help_text=u"One choice e.g. True or False?")
     multichoices = models.BooleanField(default=False, help_text=u"multiple choices?")
+    dropdown = models.BooleanField(default=False, help_text=u"Drop-down question?")
     opinion = models.BooleanField(default=False, help_text=u"Requiring Opinion?")
 
     def __str__(self):
-        return "Question %s - %s" % (self.program, self.question_text.name)
+        if (self.question_text == None):
+            return "Question - %s - %d" % (self.question_category, self.pk)
+        else:
+            #return self.question_text
+            return "Question - %s - %s" % (self.program, self.question_text.name)
+
+class DropdownQuestion(models.Model):
+    question = models.ForeignKey(Question, related_name="question_dropdown", help_text = u"Choose a question.")
+    question_text = models.CharField(max_length=255, help_text=u"Added your Dropdown text here.")
+
+    def __str__(self):
+        return self.question_text
+
+class DropdownOption(models.Model):
+    dropdown_question = models.ForeignKey(DropdownQuestion, related_name='dropdown', help_text = u"The dropdown questions")
+    option = models.CharField(max_length=255, help_text=u"Added your Dropdown text here.")
+
+    def __str__(self):
+        return self.option
 
 
 # Storing Answers

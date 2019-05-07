@@ -19,8 +19,9 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^nested_admin/', include('nested_admin.urls')),
-    url(r'^', include('polls.urls')),
-    url(r'^controlled/', include('controlled.urls')),
+    #url(r'^', include('polls.urls')),
+    #url(r'^controlled/', include('controlled.urls')),
+    url(r'^', include('controlled.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^markdownx/', include('markdownx.urls')),
 ]
