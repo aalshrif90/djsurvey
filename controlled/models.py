@@ -109,6 +109,7 @@ class Question(models.Model):
     program = models.ForeignKey(Program, help_text = u"Choose a Program", null=True, blank=True)
     test_suite = models.ForeignKey(TestSuite, help_text = u"Choose a Test Suite", null=True, blank=True)
     question_text = models.ForeignKey(QuestionText, help_text = u"Question Text", null=True, blank=True)
+    group = models.ForeignKey(Group, help_text = u"Select Group", null=True, blank=True)
     question_category = models.ForeignKey(QuestionCategory, help_text = u"Question Category", null=True, blank=True)
     singlechoice = models.BooleanField(default=False, help_text=u"One choice e.g. True or False?")
     multichoices = models.BooleanField(default=False, help_text=u"multiple choices?")
@@ -121,16 +122,17 @@ class Question(models.Model):
         else:
             #return self.question_text
             return "Question - %s - %s" % (self.program, self.question_text.name)
-
+"""
 class DropdownQuestion(models.Model):
     question = models.ForeignKey(Question, related_name="question_dropdown", help_text = u"Choose a question.")
     question_text = models.CharField(max_length=255, help_text=u"Added your Dropdown text here.")
 
     def __str__(self):
         return self.question_text
-
+"""
 class DropdownOption(models.Model):
-    dropdown_question = models.ForeignKey(DropdownQuestion, related_name='dropdown', help_text = u"The dropdown questions")
+    question = models.ForeignKey(Question, related_name="question_dropdown", help_text = u"Choose a question.")
+    #dropdown_question = models.ForeignKey(DropdownQuestion, related_name='dropdown', help_text = u"The dropdown questions")
     option = models.CharField(max_length=255, help_text=u"Added your Dropdown text here.")
 
     def __str__(self):
@@ -167,9 +169,9 @@ class RandomiseQuestions(models.Model):
 
 class ProgramOrder(models.Model):
     pcode = models.CharField(max_length=255, help_text=u"Participant Code")
-    program = models.ForeignKey(Program, help_text = u"Schema")
+    program = models.ForeignKey(Program, help_text = u"Program")
     timestamp = models.DateTimeField(auto_now_add=True)
-    showed = models.BooleanField(default=False, help_text=u"have the schema been showed?")
+    showed = models.BooleanField(default=False, help_text=u"have the program been showed?")
 
     class Meta:
         ordering = ['timestamp']

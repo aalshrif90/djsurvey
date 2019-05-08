@@ -34,7 +34,7 @@ class DropdownOptionInline(admin.StackedInline):
     model = DropdownOption
     extra = 2
 
-class DropdownQuestionAdmin(admin.ModelAdmin):
+class QuestionAdmin(admin.ModelAdmin):
     inlines = [DropdownOptionInline]
 
 """
@@ -51,11 +51,16 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [QuestionCategoryleInline, QuestionTextleInline]
 
 """
+class ParticipantsAdmin(admin.ModelAdmin):
+    list_display = ('pcode', 'group')
+
 admin.site.register(Program)
 admin.site.register(TestSuite, TestSuiteAdmin)
 admin.site.register(IndexPageContent, MarkdownxModelAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(QuestionCategory)
 admin.site.register(QuestionText)
-admin.site.register(Question)
-admin.site.register(DropdownQuestion, DropdownQuestionAdmin)
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Participants, ParticipantsAdmin)
+
+#admin.site.register(DropdownQuestion, DropdownQuestionAdmin)

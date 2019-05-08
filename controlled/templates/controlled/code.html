@@ -7,12 +7,12 @@
 
     <p class="title">Registration Code</p>
 
-    <form action="{% url 'code' %}" method="post">
+    <form action="{% url 'pcode' %}" method="post">
       {% csrf_token %}
       <div class="field">
         <label class="label">Your Code</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Text input" name="code">
+          <input class="input" type="text" placeholder="Text input" name="pcode">
         </div>
         <p class="help">The code that been given to you.</p>
       </div>

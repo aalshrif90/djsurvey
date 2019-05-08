@@ -15,12 +15,12 @@
       <div class="notification">
         <h2 class="subtitle">Question {{forloop.conuter1}}</h2>
         <div class="field">
-          <label class="label">{{question.question_text}}</label>
+          <label class="label">{{question.question_text.question_text}}</label>
           <div class="control">
             <div class="select">
               <select name="question-{{question.pk}}">
-                {% for item in question.dropdown.all %}
-                  <option value="{{ item.dropdown_text }}">{{ item.option }}</option>
+                {% for item in question.question_dropdown.all %}
+                  <option value="{{ item.option }}">{{ item.option }}</option>
                 {% endfor %}
               </select>
             </div>
