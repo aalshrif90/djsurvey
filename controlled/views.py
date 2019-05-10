@@ -119,7 +119,24 @@ def background(request):
 
 
 def showProgramCode(request):
-    pass
+    pcode = None
+    if "pcode" not in request.session:
+        return redirect('pcode')
+    else:
+        pcode = request.session["pcode"]
+
+    if request.method == 'POST':
+        programShowed = request.POST["programShowed"]
+        duration = request.POST["time_duration"]
+        programpk = request.POST["programpk"]
+        # Q pk = 11
+        if programShowed == u"1":
+            program = Program.objects.get(pk=int(programpk))
+            programOrder = ProgramOrder.objects.filter(pcode = pcode, program=program, showed = False).first()
+            programOrder.showed = True
+            programOrder.save()
+
+    return redirect('question')
 
 
 def randomiseParticipantsToGroups(pcode):
@@ -158,7 +175,7 @@ def getQuestions(pcode):
         for q in questions:
             if RandomiseQuestions.objects.filter(pcode = pcode, answered = False, question = q).exists():
                 testCases = TestCase.objects.filter(test_suite = q.test_suite).order_by('?')
-                returned_questions.append([q.pk, q.question_text.question_text, testCases])
+                returned_questions.append([q, q.question_text.question_text, testCases])
         return returned_questions
     #else if RandomiseQuestions.objects.filter(pcode = pcode, answered = True).exists():
     #    return returned_questions
@@ -177,6 +194,25 @@ def getQuestions(pcode):
                 p_order = ProgramOrder(pcode = pcode, program = program)
                 p_order.save()
         return returned_questions
+
+# save a test cases answers
+"""
+<QueryDict: {
+    u'testcase-29': [u'1', u'29'], 
+    u'testcase-35': [u'1', u'35'], 
+    u'testcase-34': [u'1', u'34'], 
+    u'testcase-33': [u'1', u'33'], 
+    u'testcase-32': [u'1', u'32'], 
+    u'testcase-31': [u'1', u'31'], 
+    u'testcase-30': [u'1', u'30'], 
+    u'questionpk': ['1'],
+    u'duration': [u'10545'], 
+    u'csrfmiddlewaretoken': [u'lLAPly0DVZBRQ7PuHO0KUX5Yb5sJUW67K8YzokuQVY5IrEIBvUqIyiVaEZd05ZIB']
+}>
+"""
+def saveAnswers(pcode, answers):
+
+    pass
         
 # Showing a Questions
 def question(request):
@@ -199,15 +235,22 @@ def question(request):
     else:
         questions = getQuestions(pcode)
 
-    print(questions)
-    """
+    #print(questions)
+    
     # Check to see if Program code is showed
-    if ProgramOrder.objects.filter(pcode = pcode, program=questions[0].program, showed = False).exists():
-        programShowed = ProgramOrder.objects.filter(pcode = pcode, program=program_list[0], showed = False).first()
+    if ProgramOrder.objects.filter(pcode = pcode, showed = False).exists():
+        programShowed = ProgramOrder.objects.filter(pcode = pcode, showed = False).first()
         program = Program.objects.get(pk=programShowed.program.pk)
         questionCounter = RandomiseQuestions.objects.filter(pcode = pcode, question__program = program, answered=False).count()
         return render(request, 'controlled/programCode.html', {'program': program, 'counter': questionCounter})
 
+    if not request.method == 'POST':
+        print questions[0]
+        return render(request, 'controlled/question.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
+    else:
+        print request.POST
+        return redirect('question')
+    """
     # if post answer save it in answers
     # if it is a question post
     if request.method == 'POST':
