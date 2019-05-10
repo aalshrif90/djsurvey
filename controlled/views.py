@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
+import re
 #from polls.models import Question as polls_question
 
 # This is the index.
@@ -184,15 +185,16 @@ def getQuestions(pcode):
         questions = Question.objects.filter(question_category = q_cat, group = group).order_by('program')
         for q in questions:
             testCases = TestCase.objects.filter(test_suite = q.test_suite).order_by('?')
-            returned_questions.append([q.pk, q.question_text.question_text, testCases])
-            randomize = RandomiseQuestions(pcode = pcode, answered = False, question = q)
-            randomize.save()
+            if not RandomiseQuestions.objects.filter(pcode = pcode, question = q).exists():
+                returned_questions.append([q.pk, q.question_text.question_text, testCases])
+                randomize = RandomiseQuestions(pcode = pcode, answered = False, question = q)
+                randomize.save()
 
-            # Get program order
-            program = Program.objects.get(pk = q.program.pk)
-            if not ProgramOrder.objects.filter(program = program, pcode = pcode).exists():
-                p_order = ProgramOrder(pcode = pcode, program = program)
-                p_order.save()
+                # Get program order
+                program = Program.objects.get(pk = q.program.pk)
+                if not ProgramOrder.objects.filter(program = program, pcode = pcode).exists():
+                    p_order = ProgramOrder(pcode = pcode, program = program)
+                    p_order.save()
         return returned_questions
 
 # save a test cases answers
@@ -211,9 +213,45 @@ def getQuestions(pcode):
 }>
 """
 def saveAnswers(pcode, answers):
+    questionpk = answers["questionpk"]
+    duration = answers["duration"]
+    pcode = pcode
+    #print "pcode = " + pcode + " questionpk = " + questionpk + " duration = " + duration
+    score_counter = 0
+    for answer in answers.dict():
+        if "testcase-" in answer:
+            testCase_id = re.sub(r'\D', "", answer)
+            #print "ID = " + testCase_id
+            testcase = TestCase.objects.get(pk = testCase_id)
+            assertion = None
+            testcase_score = 0
+            #print testcase.assertion
+            if testcase.assertion == 'T':
+                assertion = 1
+            else:
+                assertion = 0
+            #print assertion
+            if int(answers[answer]) == assertion:
+                #print "Correct add one to counter"
+                score_counter += 1
+                testcase_score = 1
 
-    pass
-        
+            # Save answered test cases
+            testCaseAnswer = AnsweredTestCases(testCase = testcase, pcode = pcode, answer = answers[answer], score = testcase_score)
+            testCaseAnswer.save()
+    question = Question.objects.get(pk = questionpk)
+    answer = Answer(question = question, pcode = pcode, duration = int(duration), score = score_counter, answer = str(answers.dict()))
+    answer.save()
+
+    # Add it was saved
+    if RandomiseQuestions.objects.filter(pcode = pcode, answered = False, question = question).exists():
+        rq = RandomiseQuestions.objects.get(pcode = pcode, answered = False, question = question)
+        rq.answered = True
+        rq.save()
+    else:
+        rq = RandomiseQuestions(pcode = pcode, answered = True, question = question)
+        rq.save()
+
 # Showing a Questions
 def question(request):
     context = None
@@ -235,82 +273,25 @@ def question(request):
     else:
         questions = getQuestions(pcode)
 
-    #print(questions)
-    
-    # Check to see if Program code is showed
-    if ProgramOrder.objects.filter(pcode = pcode, showed = False).exists():
-        programShowed = ProgramOrder.objects.filter(pcode = pcode, showed = False).first()
-        program = Program.objects.get(pk=programShowed.program.pk)
-        questionCounter = RandomiseQuestions.objects.filter(pcode = pcode, question__program = program, answered=False).count()
-        return render(request, 'controlled/programCode.html', {'program': program, 'counter': questionCounter})
+    if len(questions) > 0:
+        # Check to see if Program code is showed
+        if ProgramOrder.objects.filter(pcode = pcode, showed = False).exists():
+            programShowed = ProgramOrder.objects.filter(pcode = pcode, showed = False).first()
+            program = Program.objects.get(pk=programShowed.program.pk)
+            questionCounter = RandomiseQuestions.objects.filter(pcode = pcode, question__program = program, answered=False).count()
+            return render(request, 'controlled/programCode.html', {'program': program, 'counter': questionCounter})
 
-    if not request.method == 'POST':
-        print questions[0]
-        return render(request, 'controlled/question.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
-    else:
-        print request.POST
-        return redirect('question')
-    """
-    # if post answer save it in answers
-    # if it is a question post
-    if request.method == 'POST':
-        question_id = request.POST["question_id"]
-        duration = request.POST["time_duration"]
-        answer = request.POST["answer"]
-        questiontype = request.POST["question_type"]
-        tech_type = request.POST["tech_type"]
-        is_it_right = None
-        # We need to check if question answer is right to be saved
-        if is_it_right_answer(question_id, answer, questiontype):
-            is_it_right = True
+        if not request.method == 'POST':
+            print questions[0]
+            return render(request, 'controlled/question.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
         else:
-            is_it_right = False
-        # Save the answer then go to next
-        # Getting question
-        q_id = int(question_id)
-        q = Question.objects.get(id = q_id)
-        if RandomisedAnswersOrder.objects.filter(user_code = code, question = q, answered = False).exists():
-            print "The question was not answered and now we saving the new question"
-            answer_object = Answer(question = q,
-                                    user_code = code,
-                                    time_duration = int(duration),
-                                    answer = answer,
-                                    is_it_right = is_it_right,
-                                    question_type = questiontype,
-                                    tech_type = tech_type)
-            answer_object.save()
-            # Need to save that question been answered
-            answered_saved = answered_question(question_id, code)
-            if answered_saved:
-                print "Saved that the asnwer is done."
-            else:
-                print "ERORR: Saved that the asnwer is done."
-            #question_list = getQuestions(code)
-        question_list = getQuestionsOfGroup(code)
-
-    # No more questions
-    if not question_list:
-        return redirect('exitQuestion')
-
-    # paginate questions
-    if len(question_list) > 0:
-        paginator = Paginator(question_list, 1) # Show 25 contacts per page
-        page = request.GET.get('page')
-        try:
-            question = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            question = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            question = paginator.page(paginator.num_pages)
-
-        current_question = question.object_list[0]
-        request.session["remainingQuestions"] = len(question_list)
-        # Getting choices
-        choices = get_choices(current_question.pk)
-        #return HttpResponse("Hello World!")
-        return render(request, 'polls/question.html', {'questions': question, 'choices': choices})
+            print request.POST
+            for answer in request.POST.dict():
+                print answer
+                if "testcase-" in answer:
+                    matches = re.sub(r'\D', "", answer)
+                    print "ID = " + matches
+            saveAnswers(pcode, request.POST)
+            return redirect('question')
     else:
-        return redirect('preference')
-    """
+        return HttpResponse("You have finished thanks :)")

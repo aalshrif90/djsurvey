@@ -156,6 +156,19 @@ class Answer(models.Model):
     class Meta:
             ordering = ['timestamp']
 
+class AnsweredTestCases(models.Model):
+    testCase = models.ForeignKey(TestCase, help_text = u"TestCase Answered")
+    pcode = models.CharField(max_length=255, help_text=u"Participant Code")
+    answer = models.CharField(max_length=255, help_text=u"The answer")
+    score = models.IntegerField(default=0, help_text=u"Score")
+    timestamp = models.DateTimeField(auto_now_add=True, help_text=u"Timestamp of the answer")
+
+    def __str__(self):
+        return str(self.pk)
+
+    class Meta:
+            ordering = ['timestamp']
+
 
 # Logging the questions showed and which participant and program --- in case of counter-balancing
 class RandomiseQuestions(models.Model):
