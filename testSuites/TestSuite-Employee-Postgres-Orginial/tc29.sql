@@ -2,5 +2,5 @@ TRUE
 INSERT INTO "Employee"(
 	"id", "first", "last", "age", "address", "city", "state"
 ) VALUES (
-	0, '', '', 968, '', '', ''
+	0, '', '', NULL, NULL, '', ''
 );

@@ -294,4 +294,10 @@ def question(request):
             saveAnswers(pcode, request.POST)
             return redirect('question')
     else:
-        return HttpResponse("You have finished thanks :)")
+        #return HttpResponse("You have finished thanks :)")
+        return redirect('exit')
+
+# Thank you and exit
+def exit(request):
+    #return HttpResponse("Hello World!")
+    return render(request, 'controlled/exit.html')

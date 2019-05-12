@@ -7,5 +7,5 @@ INSERT INTO "Employee"(
 INSERT INTO "Employee"(
 	"id", "first", "last", "age", "address", "city", "state"
 ) VALUES (
-	150, '', '', 0, '', '', ''
+	718, '', '', NULL, 'ujrmbyqw', '', ''
 );

@@ -1,6 +1,6 @@
-FALSE
+TRUE
 INSERT INTO "Employee"(
 	"id", "first", "last", "age", "address", "city", "state"
 ) VALUES (
-	-226, '', '', 0, '', '', ''
+	0, '', '', 150, '', '', NULL
 );

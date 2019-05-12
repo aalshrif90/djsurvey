@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^background/$', views.background, name='background'),
     url(r'^question/$', views.question, name='question'),
     url(r'^showProgramCode/$', views.showProgramCode, name='showProgramCode'),
+    url(r'^exit/$', views.exit, name='exit'),
 ]

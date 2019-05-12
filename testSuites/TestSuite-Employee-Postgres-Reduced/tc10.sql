@@ -1,4 +1,4 @@
-FALSE
+TRUE
 INSERT INTO "Employee"(
 	"id", "first", "last", "age", "address", "city", "state"
 ) VALUES (
@@ -7,5 +7,5 @@ INSERT INTO "Employee"(
 INSERT INTO "Employee"(
 	"id", "first", "last", "age", "address", "city", "state"
 ) VALUES (
-	0, '', '', 0, '', '', ''
+	959, '', '', 78, '', '', ''
 );
