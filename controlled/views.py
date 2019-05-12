@@ -283,7 +283,8 @@ def question(request):
 
         if not request.method == 'POST':
             print questions[0]
-            return render(request, 'controlled/question.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
+            #return render(request, 'controlled/question.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
+            return render(request, 'controlled/questionhalf.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
         else:
             print request.POST
             for answer in request.POST.dict():

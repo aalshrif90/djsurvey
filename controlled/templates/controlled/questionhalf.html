@@ -99,7 +99,7 @@ padding-bottom: 0.25em;
     <button onclick="off()" class="button">Show the question</button>
   </div>
 </div>
-<div id="all">
+<div id="all" class="columns">
     <div class="column is-half">
         <div class="content">
             <p class="title is-4">The following question is based on the below schema:</p>
@@ -107,7 +107,7 @@ padding-bottom: 0.25em;
             <pre class="line-numbers"><code class="language-sql">{{ question.program.code }}</code></pre>
             </div>
         </div>
-        </div>
+    </div>
     <div class="column is-half">
         <div class="notification">
             <form action="{% url 'question' %}" method="post">

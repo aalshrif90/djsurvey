@@ -7,6 +7,8 @@ import os
 # Get models 
 from controlled.models import Program, TestCase, TestSuite
 
+# python manage.py testSuiteImporter
+
 class Command(BaseCommand):
     args = '<foo bar ...>'
     help = 'our help string comes here'
@@ -24,14 +26,24 @@ class Command(BaseCommand):
                     with open(c) as reader:
                         create_tables = reader.read()
                         program_code = program_code + create_tables + "\n"
+                program = None
                 # Creating A Program
-                program = Program(name  = program_name, code = program_code)
-                program.save()
+                if Program.objects.filter(name = program_name, code = program_code).exists():
+                    program = Program.objects.get(name = program_name, code = program_code)
+                else:
+                    program = Program(name  = program_name, code = program_code)
+                    program.save()
+
+                reducedOrOriginal = "ORIGINAL"
+                other_label = "OR"
+                if dr.__contains__("Reduced"):
+                    reducedOrOriginal = "REDUCED"
+                    other_label = "RD"
 
                 # Creating a Test Suite
                 # "PROGRAM-AUTO-GENERATOR-REDUCED"
-                testSuite_id = program_name + "-AUTO-DOMINOD-REDUCED"
-                test_suite = TestSuite(test_suite_id = testSuite_id, program = program, other_label = "RD")
+                testSuite_id = program_name + "-AUTO-DOMINOD-" + reducedOrOriginal
+                test_suite = TestSuite(test_suite_id = testSuite_id, program = program, other_label = other_label)
                 test_suite.save()
 
                 # Creating Test Cases
