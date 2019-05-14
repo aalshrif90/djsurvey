@@ -87,6 +87,78 @@ padding-bottom: 0.25em;
 .content {
     margin-bottom: 0em;
 }
+
+.h-divider {
+  margin: auto;
+  margin-top: 20px;
+  width: 80%;
+  position: relative;
+}
+
+.h-divider .shadow {
+  overflow: hidden;
+  height: 20px;
+}
+
+.h-divider .shadow:after {
+  content: '';
+  display: block;
+  margin: -25px auto 0;
+  width: 100%;
+  height: 25px;
+  border-radius: 125px/12px;
+  box-shadow: 0 0 8px black;
+}
+
+.h-divider .text {
+  width: 100px;
+  height: 45px;
+  padding: 10px;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: -33px;
+  left: 50%;
+  margin-left: -60px;
+  border-radius: 100%;
+  box-shadow: 0 2px 4px #999;
+  background: white;
+}
+
+.h-divider .text i {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  border-radius: 100%;
+  border: 1px dashed #aaa;
+  text-align: center;
+  line-height: 50px;
+  font-style: normal;
+  color: #999;
+}
+
+.h-divider .text2 {
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: -35px;
+  left: 50%;
+  margin-left: -25px;
+  border-radius: 100%;
+  box-shadow: 0 2px 4px #999;
+  background: white;
+}
+
+.h-divider img {
+  position: absolute;
+  margin: 4px;
+  max-width: 60px;
+  border-radius: 100%;
+  border: 1px dashed #aaa;
+}
+
 </style>
 {% endblock %}
 
@@ -101,7 +173,7 @@ padding-bottom: 0.25em;
 </div>
 <div id="all" class="columns">
     <div class="column is-half">
-        <div class="content">
+        <div class="content" style="position: sticky; overflow-y: auto; top: 50px;">
             <p class="title is-4">The following question is based on the below schema:</p>
             <div class="notification">
             <pre class="line-numbers"><code class="language-sql">{{ question.program.code }}</code></pre>
@@ -114,18 +186,34 @@ padding-bottom: 0.25em;
             {% csrf_token %}
             {% for testcase in testcases %}
                 <div class="content">
-                <label class="label">{{ text }}</label>
-                <pre><code class="language-sql">{{ testcase.code|linenumbers }}</code></pre>
+                    <label class="label">Q {{ forloop.counter }}: {{ text }}</label>
+                    <pre><code class="language-sql">{{ testcase.code|linenumbers }}</code></pre>
                     <div class="control">
                         <label class="radio">
-                        <input type="radio" name="testcase-{{testcase.pk}}" value="1" required> Accept <br />
+                            <input type="radio" name="testcase-{{testcase.pk}}" value="1" required> 
+                            Accept
+                        </label>
                         <br />
-                        <input type="radio" name="testcase-{{testcase.pk}}" value="0" required> Reject <br />
+                        <br />
+                        <label class="radio">
+                            <input type="radio" name="testcase-{{testcase.pk}}" value="0" required>
+                            Reject 
+                            <br />
+                        </label>
+                        <br />
+                        <br />
+                        <label class="radio">
+                            <input type="radio" name="testcase-{{testcase.pk}}" value="-1" required>
+                            I do not know 
+                            <br />
                         </label>
                         <br />
                         <!--<input type="hidden" class="input" type="text" name="testcase-{{testcase.pk}}" value="{{testcase.pk}}">-->
                     </div>
                     <br />
+                    <div class="h-divider">
+                        <div class="shadow"></div>
+                    </div>
                 </div>
             {% endfor %}
             <input type="hidden" class="input" type="text" name="questionpk" value="{{question.pk}}">

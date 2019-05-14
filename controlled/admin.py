@@ -64,6 +64,19 @@ class AnswerAdmin(admin.ModelAdmin):
     list_display = ('id', 'pcode', 'duration', 'score', 'program', 'timestamp', 'answer')
 
 
+class AnsweredTestCasesAdmin(admin.ModelAdmin):
+    def program(self, obj):
+        return obj.testCase.test_suite.program
+
+    def test_suite(self, obj):
+        return obj.testCase.test_suite.other_label
+
+    def group(self, obj):
+        p = Participants.objects.get(pcode = obj.pcode)
+        return p.group
+
+    list_display = ('pk', 'pcode', 'group', 'score', 'program', 'test_suite', 'timestamp', 'answer')
+
 admin.site.register(Program)
 admin.site.register(TestSuite, TestSuiteAdmin)
 admin.site.register(IndexPageContent, MarkdownxModelAdmin)
@@ -73,5 +86,7 @@ admin.site.register(QuestionText)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Participants, ParticipantsAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(AnsweredTestCases, AnsweredTestCasesAdmin)
+
 
 #admin.site.register(DropdownQuestion, DropdownQuestionAdmin)

@@ -11,18 +11,14 @@
 {% block content %}
 
 <div class="content">
-  {{content.formatted_markdown|safe }}
+  {{content.formatted_text|safe }}
 </div>
 <br/>
 <div class="notification">
   <div class="content">
   <p class="title is-4">ELECTRONIC CONSENT: Please select your choice below</p>
-    <p>Clicking on the "agree" button below indicates that:</p>
-
-    <ul>
-      <li>you have ready the above information</li>
-      <li>you voluntarily agree to participate</li>
-    </ul>
+    
+    {{content.formatted_consent|safe }}
 
     <p>If you do not wish to participate in the research study, please decline participation by clicking on the "disagree" button.</p>
     <form action="{% url 'index' %}" method="post">

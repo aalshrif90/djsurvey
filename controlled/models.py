@@ -31,11 +31,16 @@ ts_label = (
 class IndexPageContent(models.Model):
     title = models.CharField(max_length=255, help_text = u"Study Title")
     text = MarkdownxField(help_text = u"Markdown Text", null=True, blank=True)
+    consent = MarkdownxField(help_text = u"Consent Markdown Text", null=True, blank=True)
     default = models.BooleanField(default=False, help_text=u"Is this the default content?")
 
     @property
-    def formatted_markdown(self):
+    def formatted_text(self):
         return markdownify(self.text)
+
+    @property
+    def formatted_consent(self):
+        return markdownify(self.consent)
 
     def __str__(self):
         return self.title

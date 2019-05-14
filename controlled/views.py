@@ -235,6 +235,10 @@ def saveAnswers(pcode, answers):
                 #print "Correct add one to counter"
                 score_counter += 1
                 testcase_score = 1
+            elif int(answers[answer]) == -1:
+                testcase_score = -1
+            else:
+                testcase_score = 0
 
             # Save answered test cases
             testCaseAnswer = AnsweredTestCases(testCase = testcase, pcode = pcode, answer = answers[answer], score = testcase_score)
