@@ -186,7 +186,7 @@ padding-bottom: 0.25em;
             {% csrf_token %}
             {% for testcase in testcases %}
                 <div class="content">
-                    <label class="label">Q {{ forloop.counter }}: {{ text }}</label>
+                    <label class="label">Q{{ forloop.counter }}: {{ text }}</label>
                     <pre><code class="language-sql">{{ testcase.code|linenumbers }}</code></pre>
                     <div class="control">
                         <label class="radio">

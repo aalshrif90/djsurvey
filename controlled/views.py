@@ -15,6 +15,7 @@ def index(request):
     try:
         #del request.session['randomised_questions']
         del request.session['pcode']
+        del request.session['justShowedProgramCode']
     except KeyError as e:
         pass
     # Accepted or Declined
@@ -136,7 +137,7 @@ def showProgramCode(request):
             programOrder = ProgramOrder.objects.filter(pcode = pcode, program=program, showed = False).first()
             programOrder.showed = True
             programOrder.save()
-
+    request.session["justShowedProgramCode"] = True
     return redirect('question')
 
 
@@ -277,29 +278,34 @@ def question(request):
     else:
         questions = getQuestions(pcode)
 
+    print "Got Questions"
+    #print questions
     if len(questions) > 0:
+        print "Question size is over 0. The length is = " + str(len(questions))
         # Check to see if Program code is showed
-        if ProgramOrder.objects.filter(pcode = pcode, showed = False).exists():
-            programShowed = ProgramOrder.objects.filter(pcode = pcode, showed = False).first()
-            program = Program.objects.get(pk=programShowed.program.pk)
-            questionCounter = RandomiseQuestions.objects.filter(pcode = pcode, question__program = program, answered=False).count()
-            return render(request, 'controlled/programCode.html', {'program': program, 'counter': questionCounter})
-
-        if not request.method == 'POST':
-            print questions[0]
-            #return render(request, 'controlled/question.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
-            return render(request, 'controlled/questionhalf.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
+        if "justShowedProgramCode" in request.session:
+            if not request.method == 'POST':
+                print "Geting the questions first in the list"
+                return render(request, 'controlled/questionhalf.html', {'question': questions[0][0], 'text': questions[0][1], 'testcases': questions[0][2]})
+            else:
+                print "This is an answer to be saved"
+                #print request.POST
+                for answer in request.POST.dict():
+                    print answer
+                    if "testcase-" in answer:
+                        matches = re.sub(r'\D', "", answer)
+                        print "ID = " + matches
+                saveAnswers(pcode, request.POST)
+                # Remove session of showed program code
+                del request.session['justShowedProgramCode']
+                return redirect('question')
         else:
-            print request.POST
-            for answer in request.POST.dict():
-                print answer
-                if "testcase-" in answer:
-                    matches = re.sub(r'\D', "", answer)
-                    print "ID = " + matches
-            saveAnswers(pcode, request.POST)
-            return redirect('question')
+            if ProgramOrder.objects.filter(pcode = pcode, showed = False).exists():
+                programShowed = ProgramOrder.objects.filter(pcode = pcode, showed = False).first()
+                program = Program.objects.get(pk=programShowed.program.pk)
+                print "Current program is the following = " + program.name
+                return render(request, 'controlled/programCode.html', {'program': program})    
     else:
-        #return HttpResponse("You have finished thanks :)")
         return redirect('exit')
 
 # Thank you and exit

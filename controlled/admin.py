@@ -77,6 +77,12 @@ class AnsweredTestCasesAdmin(admin.ModelAdmin):
 
     list_display = ('pk', 'pcode', 'group', 'score', 'program', 'test_suite', 'timestamp', 'answer')
 
+class RandomiseQuestionsAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'pcode', 'question', 'timestamp', 'answered')
+
+class ProgramOrderAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'pcode', 'program', 'timestamp', 'showed')
+
 admin.site.register(Program)
 admin.site.register(TestSuite, TestSuiteAdmin)
 admin.site.register(IndexPageContent, MarkdownxModelAdmin)
@@ -87,6 +93,8 @@ admin.site.register(Question, QuestionAdmin)
 admin.site.register(Participants, ParticipantsAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(AnsweredTestCases, AnsweredTestCasesAdmin)
+admin.site.register(RandomiseQuestions, RandomiseQuestionsAdmin)
+admin.site.register(ProgramOrder, ProgramOrderAdmin)
 
 
 #admin.site.register(DropdownQuestion, DropdownQuestionAdmin)
