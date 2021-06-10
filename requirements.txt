@@ -1,4 +1,4 @@
-Django==1.11.7
+Django==2.2.24
 django-debug-toolbar==1.9.1
 django-markdownx==2.0.28
 django-nested-admin==3.0.21
