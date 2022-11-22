@@ -3,7 +3,7 @@ django-debug-toolbar==1.9.1
 django-markdownx==2.0.28
 django-nested-admin==3.0.21
 Markdown==3.1
-Pillow==6.0.0
+Pillow==9.3.0
 python-monkey-business==1.0.0
 pytz==2019.1
 six==1.12.0
